@@ -10,7 +10,21 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-GEMINI_API_KEY = "AQ.Ab8RN6Khj1CxHH-uCaCudfsie0cm2zA12MMAG9VWBzdeDUixvw"
+GEMINI_API_KEY = curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent" \
+  -H 'Content-Type: application/json' \
+  -H 'X-goog-api-key: AQ.Ab8RN6LD9jWrpqP7CNYIJSw4gCyXkkkXKiRPzs9sqH0G5Q1sTA' \
+  -X POST \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {
+            "text": "Explain how AI works in a few words"
+          }
+        ]
+      }
+    ]
+  
 GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
