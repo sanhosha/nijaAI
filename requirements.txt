@@ -1,1 +1,3 @@
-AQ.Ab8RN6JTyXzlL6rKYjVK3UhFWfpEccjNmjRtUxBaXZqrDeZHow
+streamlit
+pillow
+google-generativeai
