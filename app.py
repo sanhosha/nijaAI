@@ -10,167 +10,79 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom Styling & UI Layout
-html_layout = """
-<style>
+# Dark Minimal Styling
+st.markdown(
+    """
+    <style>
     .stApp {
         background-color: #0e0e10;
         color: #f0f0f0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-    .top-nav {
+    .header-box {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-bottom: 20px;
+        padding-bottom: 10px;
     }
-    .brand {
-        font-size: 1.15rem;
-        font-weight: 500;
-        color: #d1d5db;
-    }
-    .profile-pill {
-        background-color: #d9532f;
-        color: white;
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-    }
-    .hero {
+    .hero-box {
         text-align: center;
-        margin: 10px 0 20px 0;
+        margin: 15px 0 25px 0;
     }
-    .sparkle {
-        font-size: 2.4rem;
+    .sparkle-icon {
+        font-size: 2.6rem;
         background: linear-gradient(45deg, #4285F4, #9B72CB, #D96570);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         display: inline-block;
     }
-    .jump-in {
-        font-size: 1.85rem;
+    .hero-title {
+        font-size: 2rem;
         font-weight: 500;
         color: #e5e7eb;
+        margin-top: 2px;
+    }
+    .dev-by {
+        color: #9ca3af;
+        font-size: 0.85rem;
         margin-top: 4px;
     }
-    .credit {
-        color: #9ca3af;
-        font-size: 0.82rem;
-        margin-top: 3px;
-    }
-    .drawer-card {
-        background-color: #1a1a1c;
-        border-radius: 28px;
-        padding: 20px 18px;
-        margin-top: 15px;
-        border: 1px solid #28282b;
-    }
-    .drawer-handle {
-        width: 36px;
-        height: 4px;
-        background-color: #4b5563;
-        border-radius: 4px;
-        margin: 0 auto 18px auto;
-    }
-    .actions-grid {
-        display: flex;
-        justify-content: space-around;
-        margin-bottom: 20px;
-    }
-    .action-item {
-        background-color: #242427;
-        border-radius: 20px;
-        width: 76px;
-        height: 76px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        font-size: 0.78rem;
-        color: #d1d5db;
-        border: 1px solid #323236;
-    }
-    .feature-row {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        padding: 10px 6px;
-    }
-    .feature-icon {
-        font-size: 1.4rem;
-        width: 30px;
-        text-align: center;
-    }
-    .feature-title {
-        font-size: 0.98rem;
-        font-weight: 500;
-        color: #f3f4f6;
-    }
-    .feature-desc {
-        font-size: 0.78rem;
-        color: #9ca3af;
-    }
-</style>
-
-<div class="top-nav">
-    <div class="brand">Gemini Flash <span style="font-size: 0.7rem; color: #60a5fa;">●</span></div>
-    <div class="profile-pill">S</div>
-</div>
-
-<div class="hero">
-    <div class="sparkle">✦</div>
-    <div class="jump-in">Let’s jump in, Santhu</div>
-    <div class="credit">Developed by Santhosh D</div>
-</div>
-
-<div class="drawer-card">
-    <div class="drawer-handle"></div>
-    <div class="actions-grid">
-        <div class="action-item"><span style="font-size: 1.3rem;">🖼️</span>Photos</div>
-        <div class="action-item"><span style="font-size: 1.3rem;">📷</span>Camera</div>
-        <div class="action-item"><span style="font-size: 1.3rem;">✨</span>Avatar</div>
-    </div>
-    
-    <div class="feature-row">
-        <div class="feature-icon">🎨</div>
-        <div>
-            <div class="feature-title">Images</div>
-            <div class="feature-desc">Create and edit</div>
+    </style>
+    <div class="header-box">
+        <div style="font-size: 1.15rem; font-weight: 500; color: #d1d5db;">
+            Gemini Flash <span style="font-size: 0.7rem; color: #60a5fa;">●</span>
+        </div>
+        <div style="background-color: #d9532f; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+            S
         </div>
     </div>
-    <div class="feature-row">
-        <div class="feature-icon">📹</div>
-        <div>
-            <div class="feature-title">Videos</div>
-            <div class="feature-desc">Bring ideas to life</div>
-        </div>
+    <div class="hero-box">
+        <div class="sparkle-icon">✦</div>
+        <div class="hero-title">Let’s jump in, Santhu</div>
+        <div class="dev-by">Developed by Santhosh D</div>
     </div>
-    <div class="feature-row">
-        <div class="feature-icon">🎵</div>
-        <div>
-            <div class="feature-title">Music</div>
-            <div class="feature-desc">Make audio tracks</div>
-        </div>
-    </div>
-    <div class="feature-row">
-        <div class="feature-icon">📝</div>
-        <div>
-            <div class="feature-title">Canvas</div>
-            <div class="feature-desc">Code, write or make slides</div>
-        </div>
-    </div>
-</div>
-<br>
-"""
+    """,
+    unsafe_allow_html=True
+)
 
-st.markdown(html_layout, unsafe_allow_html=True)
+# Gemini Drawer Menu (Clean Native Streamlit Components)
+with st.container(border=True):
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.button("🖼️ Photos", use_container_width=True)
+    with col2:
+        st.button("📷 Camera", use_container_width=True)
+    with col3:
+        st.button("✨ Avatar", use_container_width=True)
 
-# Image Studio in expander
+    st.divider()
+
+    st.markdown("🎨 **Images**  \n:grey[Create and edit]")
+    st.markdown("📹 **Videos**  \n:grey[Bring ideas to life]")
+    st.markdown("🎵 **Music**  \n:grey[Make audio tracks]")
+    st.markdown("📝 **Canvas**  \n:grey[Code, write or make slides]")
+
+# Photo Editing Section
 with st.expander("📸 ಫೋಟೋ ಎಡಿಟಿಂಗ್ ತೆರೆಯಿರಿ (Image Studio)"):
     uploaded_file = st.file_uploader("ಫೋಟೋ ಅಪ್ಲೋಡ್ ಮಾಡಿ", type=["jpg", "jpeg", "png"])
     if uploaded_file:
@@ -186,7 +98,7 @@ with st.expander("📸 ಫೋಟೋ ಎಡಿಟಿಂಗ್ ತೆರೆಯಿ�
             edited = edited.convert("L")
         st.image(edited, caption="ಎಡಿಟ್ ಆದ ಚಿತ್ರ", use_container_width=True)
 
-# Bottom Interactive Chat Input
+# Chat Input & Responses
 user_query = st.chat_input("Ask NijaAI anything...")
 
 if user_query:
