@@ -1,4 +1,4 @@
-Indiaimport streamlit as st
+import streamlit as st
 import math
 from PIL import Image, ImageEnhance, ImageFilter
 from duckduckgo_search import DDGS
