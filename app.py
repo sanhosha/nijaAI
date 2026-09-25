@@ -1,6 +1,6 @@
 import streamlit as st
 import math
-from PIL import Image, ImageEnhance
+from PIL import Image, ImageEnhance, ImageFilter
 from duckduckgo_search import DDGS
 
 st.set_page_config(
@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Dark Minimal Styling
+# Styling
 st.markdown(
     """
     <style>
@@ -27,7 +27,7 @@ st.markdown(
     }
     .hero-box {
         text-align: center;
-        margin: 15px 0 25px 0;
+        margin: 15px 0 20px 0;
     }
     .sparkle-icon {
         font-size: 2.6rem;
@@ -65,25 +65,61 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Gemini Drawer Menu (Clean Native Streamlit Components)
+# App State to handle active tabs
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = "Home"
+
+def set_tab(name):
+    st.session_state.active_tab = name
+
+# Drawer Buttons
 with st.container(border=True):
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.button("🖼️ Photos", use_container_width=True)
+        if st.button("🖼️ Photos", use_container_width=True):
+            set_tab("Photos")
     with col2:
-        st.button("📷 Camera", use_container_width=True)
+        if st.button("📷 Camera", use_container_width=True):
+            set_tab("Camera")
     with col3:
-        st.button("✨ Avatar", use_container_width=True)
+        if st.button("✨ Avatar", use_container_width=True):
+            set_tab("Avatar")
 
     st.divider()
 
-    st.markdown("🎨 **Images**  \n:grey[Create and edit]")
-    st.markdown("📹 **Videos**  \n:grey[Bring ideas to life]")
-    st.markdown("🎵 **Music**  \n:grey[Make audio tracks]")
-    st.markdown("📝 **Canvas**  \n:grey[Code, write or make slides]")
+    c1, c2 = st.columns([1, 4])
+    with c1:
+        if st.button("🎨 Images", use_container_width=True):
+            set_tab("Photos")
+    with c2:
+        st.caption("ಫೋಟೋಗಳನ್ನು ಎಡಿಟ್ ಮಾಡಿ")
 
-# Photo Editing Section
-with st.expander("📸 ಫೋಟೋ ಎಡಿಟಿಂಗ್ ತೆರೆಯಿರಿ (Image Studio)"):
+    c3, c4 = st.columns([1, 4])
+    with c3:
+        if st.button("📹 Videos", use_container_width=True):
+            set_tab("Videos")
+    with c4:
+        st.caption("ವೀಡಿಯೊ ಕಲ್ಪನೆಗಳು ಮತ್ತು ಸ್ಕ್ರಿಪ್ಟ್")
+
+    c5, c6 = st.columns([1, 4])
+    with c5:
+        if st.button("🎵 Music", use_container_width=True):
+            set_tab("Music")
+    with c6:
+        st.caption("ಹಾಡು ಮತ್ತು ಆಡಿಯೋ ಐಡಿಯಾಗಳು")
+
+    c7, c8 = st.columns([1, 4])
+    with c7:
+        if st.button("📝 Canvas", use_container_width=True):
+            set_tab("Canvas")
+    with c8:
+        st.caption("ಕೋಡ್ ಮತ್ತು ನೋಟ್ಸ್ ಬರೆಯಿರಿ")
+
+# Screen Changes Based on Tap
+st.write("")
+
+if st.session_state.active_tab == "Photos":
+    st.subheader("🖼️ Photos & Image Studio")
     uploaded_file = st.file_uploader("ಫೋಟೋ ಅಪ್ಲೋಡ್ ಮಾಡಿ", type=["jpg", "jpeg", "png"])
     if uploaded_file:
         img = Image.open(uploaded_file)
@@ -98,7 +134,31 @@ with st.expander("📸 ಫೋಟೋ ಎಡಿಟಿಂಗ್ ತೆರೆಯಿ�
             edited = edited.convert("L")
         st.image(edited, caption="ಎಡಿಟ್ ಆದ ಚಿತ್ರ", use_container_width=True)
 
-# Chat Input & Responses
+elif st.session_state.active_tab == "Camera":
+    st.subheader("📷 ಲೈವ್ ಕ್ಯಾಮೆರಾ")
+    camera_photo = st.camera_input("ಸೆಲ್ಫಿ ಅಥವಾ ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ")
+    if camera_photo:
+        st.image(camera_photo, caption="ಕ್ಯಾಪ್ಚರ್ ಮಾಡಿದ ಫೋಟೋ", use_container_width=True)
+
+elif st.session_state.active_tab == "Avatar":
+    st.subheader("✨ Avatar Studio")
+    st.info("ನಿಮ್ಮ AI ಅವತಾರ್ ಪ್ರೊಫೈಲ್ ಕ್ರಿಯೇಟರ್ ಸದ್ಯದಲ್ಲೇ ಬರಲಿದೆ!")
+
+elif st.session_state.active_tab == "Videos":
+    st.subheader("📹 Video Ideas & Prompt Generator")
+    v_topic = st.text_input("ಯಾವ ವಿಷಯದ ಬಗ್ಗೆ ವೀಡಿಯೋ ಸ್ಕ್ರಿಪ್ಟ್ ಬೇಕು?")
+    if st.button("Generate Script") and v_topic:
+        st.success(f"'{v_topic}' ಗಾಗಿ ಶಾರ್ಟ್ಸ್/ರೀಲ್ಸ್ ಸ್ಕ್ರಿಪ್ಟ್ ಐಡಿಯಾ ಸಿದ್ಧವಾಗಿದೆ!")
+
+elif st.session_state.active_tab == "Music":
+    st.subheader("🎵 Music Track Assistant")
+    st.info("ಹಾಡಿನ ಸಾಹಿತ್ಯ ಮತ್ತು ಮ್ಯೂಸಿಕ್ ಕಂಪೋಸಿಷನ್ ಪ್ರಾಂಪ್ಟ್ ಜನರೇಟರ್.")
+
+elif st.session_state.active_tab == "Canvas":
+    st.subheader("📝 Nija Canvas")
+    st.text_area("ನಿಮ್ಮ ನೋಟ್ಸ್ ಅಥವಾ ಕೋಡ್ ಅನ್ನು ಇಲ್ಲಿ ಬರೆಯಿರಿ:", height=200)
+
+# Bottom Interactive Chat Input
 user_query = st.chat_input("Ask NijaAI anything...")
 
 if user_query:
