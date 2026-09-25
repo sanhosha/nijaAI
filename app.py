@@ -2,10 +2,14 @@ import streamlit as st
 import math
 from PIL import Image, ImageEnhance, ImageFilter
 from duckduckgo_search import DDGS
+from groq import Groq
 
-st.set_page_config(page_title="NijaAI - Smart City & Studio", page_icon="⚡", layout="wide")
+# Groq API Key (ನಿಮ್ಮ API ಕೀಯನ್ನು ಇಲ್ಲಿ ಪೇಸ್ಟ್ ಮಾಡಿ)
+GROQ_API_KEY = "ಇಲ್ಲಿ_ನಿಮ್ಮ_GROQ_API_KEY_ಹಾಕಿ"
+
+st.set_page_config(page_title="NijaAI - Smart AI & Studio", page_icon="⚡", layout="wide")
 st.title("⚡ NijaAI (ನಿಜ AI)")
-st.caption("Developed by Santhosh D | ಸ್ಮಾರ್ಟ್ ಲೈವ್ ಸರ್ಚ್ • ಎ ಟು ಝಡ್ ಗೈಡ್ • ನಿಖರ ಲೆಕ್ಕಾಚಾರ • ಫೋಟೋ ಸ್ಟುಡಿಯೋ")
+st.caption("Developed by Santhosh D | AI ಉತ್ತರ • ಲೈವ್ ವೆಬ್ ಸರ್ಚ್ • ಲೆಕ್ಕಾಚಾರ • ಫೋಟೋ ಸ್ಟುಡಿಯೋ")
 
 # Sidebar - Image Studio
 st.sidebar.header("🎨 ಫೋಟೋ ಸ್ಟುಡಿಯೋ (Image Studio)")
@@ -35,18 +39,18 @@ if uploaded_file:
         
     st.sidebar.image(edited_image, caption="ಎಡಿಟ್ ಆದ ಫೋಟೋ", use_container_width=True)
 
-# Main Search & Logic
-query = st.text_input("ಸರ್ಚ್ ಮಾಡಿ ಅಥವಾ ಲೆಕ್ಕ ನಮೂದಿಸಿ:")
+# Main Interaction
+query = st.text_input("ನಿಮ್ಮ ಪ್ರಶ್ನೆ ಕೇಳಿ ಅಥವಾ ಲೆಕ್ಕ ನಮೂದಿಸಿ:")
 
-if st.button("Search / Run") and query:
+if st.button("Search / Ask") and query:
     q_lower = query.lower().strip()
     
-    # 1. Creator / Founder Check
+    # 1. Creator / Founder Rule
     creator_keywords = ["creat", "founder", "owner", "developed", "ಯಾರು", "ಮಾಡಿದ್ದು", "ಯಾರ", "ಹೆಸರು", "name"]
     if any(k in q_lower for k in ["creat", "founder", "owner", "nija ai", "nijaai"]) and any(k in q_lower for k in creator_keywords):
         st.subheader("👑 NijaAI ಪರಿಚಯ")
         st.success("🌟 **NijaAI (ನಿಜ AI)** ಅನ್ನು ಅಭಿವೃದ್ಧಿಪಡಿಸಿದವರು ಮತ್ತು ಇದರ ಸಂಸ್ಥಾಪಕರು **Santhosh D (ಸಂತೋಷ್ ಡಿ)**.")
-        st.info("NijaAI ಎಂಬುದು ಸ್ಮಾರ್ಟ್ ಲೈವ್ ವೆಬ್ ಸರ್ಚ್, ನಿಖರ ಲೆಕ್ಕಾಚಾರ ಮತ್ತು ಇಮೇಜ್ ಸ್ಟುಡಿಯೋ ಒದಗಿಸುವ ವೇಗದ ಎಐ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಆಗಿದೆ.")
+        st.info("NijaAI ಅತ್ಯಾಧುನಿಕ AI ಚಾಟ್, ವೆಬ್ ಮಾಹಿತಿ ಮತ್ತು ಫೋಟೋ ಎಡಿಟಿಂಗ್ ಒದಗಿಸುವ ವೇಗದ ಎಐ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಆಗಿದೆ.")
         
     # 2. Math Calculation
     elif any(op in query for op in ["+", "-", "*", "/", "%", "**"]) and any(char.isdigit() for char in query):
@@ -57,22 +61,34 @@ if st.button("Search / Run") and query:
         except Exception as e:
             st.error(f"ಲೆಕ್ಕಾಚಾರದಲ್ಲಿ ದೋಷ: {e}")
             
-    # 3. Live Web Search
+    # 3. Direct AI Answer for everything else
     else:
-        st.subheader("🌐 AI ಸಮಗ್ರ ವಿವರ (A to Z Guide)")
-        with st.spinner("ಮಾಹಿತಿ ಸಂಗ್ರಹಿಸಲಾಗುತ್ತಿದೆ..."):
+        st.subheader("🤖 NijaAI ಉತ್ತರ")
+        with st.spinner("ಯೋಚಿಸುತ್ತಿದೆ..."):
             try:
-                results = []
+                # ಲೈವ್ ಸರ್ಚ್ ಮಾಹಿತಿ ಸಂಗ್ರಹ
+                web_context = ""
                 with DDGS() as ddgs:
-                    for r in ddgs.text(query, max_results=5):
-                        results.append(r)
+                    for r in ddgs.text(query, max_results=3):
+                        web_context += f"- {r.get('title')}: {r.get('body')}\n"
                 
-                if results:
-                    for item in results:
-                        st.markdown(f"### [{item.get('title')}]({item.get('href')})")
-                        st.write(item.get("body"))
-                        st.divider()
-                else:
-                    st.warning("ಯಾವುದೇ ಫಲಿತಾಂಶಗಳು ಕಂಡುಬಂದಿಲ್ಲ.")
+                # Groq AI ಮೂಲಕ ಉತ್ತರ ರಚನೆ
+                client = Groq(api_key=GROQ_API_KEY)
+                system_prompt = (
+                    "You are NijaAI, an intelligent assistant built by Santhosh D. "
+                    "Answer clearly, informatively, and accurately in the requested language (Kannada or English). "
+                    "Use the provided web context if relevant."
+                )
+                user_msg = f"Question: {query}\n\nWeb context (if needed):\n{web_context}"
+                
+                response = client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_msg}
+                    ]
+                )
+                
+                st.write(response.choices[0].message.content)
             except Exception as e:
-                st.error(f"ದೋಷ: {e}")
+                st.error(f"ಉತ್ತರ ಪಡೆಯುವಲ್ಲಿ ದೋಷ: {e}")
