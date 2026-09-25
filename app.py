@@ -1,80 +1,251 @@
-import streamlit as st
+Indiaimport streamlit as st
 import math
 from PIL import Image, ImageEnhance, ImageFilter
 from duckduckgo_search import DDGS
 
-st.set_page_config(page_title="NijaAI - Smart AI & Studio", page_icon="⚡", layout="wide")
-st.title("⚡ NijaAI (ನಿಜ AI)")
-st.caption("Developed by Santhosh D | AI ಉತ್ತರ • ಲೈವ್ ವೆಬ್ ಸರ್ಚ್ • ಲೆಕ್ಕಾಚಾರ • ಫೋಟೋ ಸ್ಟುಡಿಯೋ")
+st.set_page_config(
+    page_title="NijaAI - Gemini Edition", 
+    page_icon="✦", 
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
 
-# Sidebar - Image Studio
-st.sidebar.header("🎨 ಫೋಟೋ ಸ್ಟುಡಿಯೋ (Image Studio)")
-uploaded_file = st.sidebar.file_uploader("ಫೋಟೋ ಅಪ್ಲೋಡ್ ಮಾಡಿ", type=["jpg", "jpeg", "png"])
+# Custom Styling for Gemini Mobile Drawer UI
+st.markdown("""
+<style>
+    .stApp {
+        background-color: #0e0e10;
+        color: #f0f0f0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    
+    /* Top Bar */
+    .top-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 20px;
+    }
+    .brand {
+        font-size: 1.15rem;
+        font-weight: 500;
+        color: #d1d5db;
+    }
+    .profile-pill {
+        background-color: #d9532f;
+        color: white;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    
+    /* Hero Sparkle & Name */
+    .hero {
+        text-align: center;
+        margin: 15px 0 25px 0;
+    }
+    .sparkle {
+        font-size: 2.4rem;
+        background: linear-gradient(45deg, #4285F4, #9B72CB, #D96570);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+    }
+    .jump-in {
+        font-size: 1.9rem;
+        font-weight: 500;
+        color: #e5e7eb;
+        margin-top: 4px;
+    }
+    .credit {
+        color: #9ca3af;
+        font-size: 0.82rem;
+        margin-top: 3px;
+    }
 
-if uploaded_file:
-    image = Image.open(uploaded_file)
-    st.sidebar.image(image, caption="ಮೂಲ ಫೋಟೋ", use_container_width=True)
+    /* Floating Gemini Drawer */
+    .drawer-card {
+        background-color: #1a1a1c;
+        border-radius: 28px;
+        padding: 22px 18px;
+        margin-top: 15px;
+        border: 1px solid #28282b;
+    }
+    .drawer-handle {
+        width: 36px;
+        height: 4px;
+        background-color: #4b5563;
+        border-radius: 4px;
+        margin: 0 auto 20px auto;
+    }
+
+    /* Top Action Icons Row */
+    .actions-grid {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 25px;
+    }
+    .action-item {
+        background-color: #242427;
+        border-radius: 22px;
+        width: 78px;
+        height: 78px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-size: 0.78rem;
+        color: #d1d5db;
+        border: 1px solid #323236;
+    }
+    .action-item span.icon {
+        font-size: 1.4rem;
+    }
+
+    /* Feature List Items */
+    .feature-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 12px 6px;
+    }
+    .feature-icon {
+        font-size: 1.5rem;
+        color: #9ca3af;
+        width: 30px;
+        text-align: center;
+    }
+    .feature-info {
+        display: flex;
+        flex-direction: column;
+    }
+    .feature-title {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #f3f4f6;
+    }
+    .feature-desc {
+        font-size: 0.8rem;
+        color: #9ca3af;
+    }
+</style>
+
+<!-- Top Bar -->
+<div class="top-nav">
+    <div class="brand">Gemini Flash <span style="font-size: 0.7rem; color: #60a5fa;">●</span></div>
+    <div class="profile-pill">S</div>
+</div>
+
+<!-- Center Greeting -->
+<div class="hero">
+    <div class="sparkle">✦</div>
+    <div class="jump-in">Let’s jump in, Santhu</div>
+    <div class="credit">Developed by Santhosh D</div>
+</div>
+
+<!-- Bottom Drawer like Google Gemini Screenshot -->
+<div class="drawer-card">
+    <div class="drawer-handle"></div>
     
-    st.sidebar.subheader("ಎಡಿಟಿಂಗ್")
-    rotation = st.sidebar.slider("ತಿರುಗಿಸಿ", 0, 360, 0, 90)
-    brightness = st.sidebar.slider("ಬೆಳಕು", 0.5, 2.0, 1.0, 0.1)
-    contrast = st.sidebar.slider("ಕಾಂಟ್ರಾಸ್ಟ್", 0.5, 2.0, 1.0, 0.1)
-    apply_blur = st.sidebar.checkbox("Blur Filter")
-    apply_grayscale = st.sidebar.checkbox("Black & White")
+    <!-- Top 3 Rounded Buttons -->
+    <div class="actions-grid">
+        <div class="action-item"><span class="icon">🖼️</span>Photos</div>
+        <div class="action-item"><span class="icon">📷</span>Camera</div>
+        <div class="action-item"><span class="icon">✨</span>Avatar</div>
+    </div>
     
-    edited_image = image.rotate(rotation)
-    enhancer_b = ImageEnhance.Brightness(edited_image)
-    edited_image = enhancer_b.enhance(brightness)
-    enhancer_c = ImageEnhance.Contrast(edited_image)
-    edited_image = enhancer_c.enhance(contrast)
+    <!-- Vertical List of Options -->
+    <div class="feature-row">
+        <div class="feature-icon">🎨</div>
+        <div class="feature-info">
+            <span class="feature-title">Images</span>
+            <span class="feature-desc">Create and edit</span>
+        </div>
+    </div>
     
-    if apply_blur:
-        edited_image = edited_image.filter(ImageFilter.BLUR)
-    if apply_grayscale:
-        edited_image = edited_image.convert("L")
+    <div class="feature-row">
+        <div class="feature-icon">📹</div>
+        <div class="feature-info">
+            <span class="feature-title">Videos</span>
+            <span class="feature-desc">Bring ideas to life</span>
+        </div>
+    </div>
+    
+    <div class="feature-row">
+        <div class="feature-icon">🎵</div>
+        <div class="feature-info">
+            <span class="feature-title">Music</span>
+            <span class="feature-desc">Make audio tracks</span>
+        </div>
+    </div>
+    
+    <div class="feature-row">
+        <div class="feature-icon">📝</div>
+        <div class="feature-info">
+            <span class="feature-title">Canvas</span>
+            <span class="feature-desc">Code, write or make slides</span>
+        </div>
+    </div>
+</div>
+<br>
+""", unsafe_allow_html=True)
+
+# Image Editor inside expander / sidebar
+with st.expander("📸 ಫೋಟೋ ಎಡಿಟಿಂಗ್ ತೆರೆಯಿರಿ (Image Studio)"):
+    uploaded_file = st.file_uploader("ಫೋಟೋ ಅಪ್ಲೋಡ್ ಮಾಡಿ", type=["jpg", "jpeg", "png"])
+    if uploaded_file:
+        img = Image.open(uploaded_file)
+        st.image(img, caption="ಮೂಲ ಫೋಟೋ", use_container_width=True)
+        rot = st.slider("ತಿರುಗಿಸಿ", 0, 360, 0, 90)
+        bright = st.slider("ಬೆಳಕು", 0.5, 2.0, 1.0, 0.1)
+        bw = st.checkbox("Black & White")
         
-    st.sidebar.image(edited_image, caption="ಎಡಿಟ್ ಆದ ಫೋಟೋ", use_container_width=True)
+        edited = img.rotate(rot)
+        edited = ImageEnhance.Brightness(edited).enhance(bright)
+        if bw:
+            edited = edited.convert("L")
+        st.image(edited, caption="ಎಡಿಟ್ ಆದ ಚಿತ್ರ", use_container_width=True)
 
-# Main Interaction
-query = st.text_input("ನಿಮ್ಮ ಪ್ರಶ್ನೆ ಕೇಳಿ ಅಥವಾ ಲೆಕ್ಕ ನಮೂದಿಸಿ:")
+# Bottom Interactive Chat Input
+user_query = st.chat_input("Ask NijaAI anything...")
 
-if st.button("Search / Ask") and query:
-    q_lower = query.lower().strip()
+if user_query:
+    q_low = user_query.lower().strip()
     
-    # 1. Creator / Founder Rule
-    creator_keywords = ["creat", "founder", "owner", "developed", "ಯಾರು", "ಮಾಡಿದ್ದು", "ಯಾರ", "ಹೆಸರು", "name"]
-    if any(k in q_lower for k in ["creat", "founder", "owner", "nija ai", "nijaai"]) and any(k in q_lower for k in creator_keywords):
-        st.subheader("👑 NijaAI ಪರಿಚಯ")
-        st.success("🌟 **NijaAI (ನಿಜ AI)** ಅನ್ನು ಅಭಿವೃದ್ಧಿಪಡಿಸಿದವರು ಮತ್ತು ಇದರ ಸಂಸ್ಥಾಪಕರು **Santhosh D (ಸಂತೋಷ್ ಡಿ)**.")
-        st.info("NijaAI ಅತ್ಯಾಧುನಿಕ AI ಸರ್ಚ್, ಲೈವ್ ಮಾಹಿತಿ ಮತ್ತು ಫೋಟೋ ಎಡಿಟಿಂಗ್ ಒದಗಿಸುವ ವೇಗದ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಆಗಿದೆ.")
+    with st.chat_message("user"):
+        st.write(user_query)
         
-    # 2. Math Calculation
-    elif any(op in query for op in ["+", "-", "*", "/", "%", "**"]) and any(char.isdigit() for char in query):
-        st.subheader("🔢 ನಿಖರ ಲೆಕ್ಕಾಚಾರದ ಫಲಿತಾಂಶ")
-        try:
-            result = eval(query, {"__builtins__": None, "math": math})
-            st.success(f"**ಲೆಕ್ಕ:** `{query}`  \n**ಉತ್ತರ:** `{result}`")
-        except Exception as e:
-            st.error(f"ಲೆಕ್ಕಾಚಾರದಲ್ಲಿ ದೋಷ: {e}")
+    with st.chat_message("assistant"):
+        # 1. Founder & Developer Details
+        creator_words = ["creator", "founder", "owner", "developed", "who made", "ಯಾರು", "ಮಾಡಿದ್ದು", "ಹೆಸರು"]
+        if any(w in q_low for w in ["nija", "founder", "creator", "owner", "developed"]) and any(w in q_low for w in creator_words):
+            st.markdown("🌟 **NijaAI** ಅನ್ನು ಅಭಿವೃದ್ಧಿಪಡಿಸಿದವರು ಮತ್ತು ಇದರ ಸಂಸ್ಥಾಪಕರು **Santhosh D (ಸಂತೋಷ್ ಡಿ)**.")
             
-    # 3. Web Search & Information
-    else:
-        st.subheader("🤖 NijaAI ಉತ್ತರ")
-        with st.spinner("ಮಾಹಿತಿ ಪಡೆಯಲಾಗುತ್ತಿದೆ..."):
+        # 2. Math Calculations
+        elif any(op in user_query for op in ["+", "-", "*", "/", "%", "**"]) and any(c.isdigit() for c in user_query):
             try:
-                results = []
-                with DDGS() as ddgs:
-                    for r in ddgs.text(query, max_results=5):
-                        results.append(r)
-                
-                if results:
-                    st.info(f"🔍 **'{query}'** ಕುರಿತು ಲಭ್ಯವಿರುವ ಪ್ರಮುಖ ವಿವರಗಳು:")
-                    for item in results:
-                        st.markdown(f"### [{item.get('title')}]({item.get('href')})")
-                        st.write(item.get("body"))
-                        st.divider()
-                else:
-                    st.warning("ಯಾವುದೇ ನಿಖರ ಮಾಹಿತಿ ದೊರೆತಿಲ್ಲ. ಬೇರೆ ರೀತಿಯಲ್ಲಿ ಹುಡುಕಿ ನೋಡಿ.")
+                ans = eval(user_query, {"__builtins__": None, "math": math})
+                st.markdown(f"**ಉತ್ತರ:** `{ans}`")
             except Exception as e:
-                st.error(f"ದೋಷ: {e}")
+                st.error(f"ಲೆಕ್ಕಾಚಾರ ದೋಷ: {e}")
                 
+        # 3. Direct Clean Text Answers (No Raw Links)
+        else:
+            with st.spinner("ಹುಡುಕಲಾಗುತ್ತಿದೆ..."):
+                try:
+                    res_texts = []
+                    with DDGS() as ddgs:
+                        for item in ddgs.text(user_query, max_results=3):
+                            if item.get("body"):
+                                res_texts.append(item.get("body"))
+                    if res_texts:
+                        st.write(" ".join(res_texts))
+                    else:
+                        st.info("ಕ್ಷಮಿಸಿ, ಈ ಬಗ್ಗೆ ಯಾವುದೇ ಮಾಹಿತಿ ಸಿಗಲಿಲ್ಲ.")
+                except Exception as e:
+                    st.error(f"ದೋಷ: {e}")
