@@ -6,7 +6,7 @@ from duckduckgo_search import DDGS
 
 st.set_page_config(page_title="NijaAI - Smart City & Studio", page_icon="⚡", layout="wide")
 st.title("⚡ NijaAI (ನಿಜ AI)")
-st.caption("ಸ್ಮಾರ್ಟ್ ಲೈವ್ ಸರ್ಚ್ • ಎ ಟು ಝಡ್ ಗೈಡ್ • ನಿಖರ ಲೆಕ್ಕಾಚಾರ • ಫೋಟೋ ಸ್ಟುಡಿಯೋ")
+st.caption("Developed by Santhosh D | ಸ್ಮಾರ್ಟ್ ಲೈವ್ ಸರ್ಚ್ • ಎ ಟು ಝಡ್ ಗೈಡ್ • ನಿಖರ ಲೆಕ್ಕಾಚಾರ • ಫೋಟೋ ಸ್ಟುಡಿಯೋ")
 
 # Sidebar - Image Studio
 st.sidebar.header("🖼️ ಫೋಟೋ ಎಡಿಟಿಂಗ್ (Image Studio)")
