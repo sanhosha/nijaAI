@@ -1,4 +1,1 @@
-streamlit
-pillow
-duckduckgo-search
-groq
+AQ.Ab8RN6JTyXzlL6rKYjVK3UhFWfpEccjNmjRtUxBaXZqrDeZHow
