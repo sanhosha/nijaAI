@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-AQ.Ab8RN6JTyXzlL6rKYjVK3UhFWfpEccjNmjRtUxBaXZqrDeZHow
+GEMINI_API_KEY = "AQ_AbaRN6JTyKztLGrKvjVK3UhFWfpFccjHmjRtUxBoxZqrbezHow"
 GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
