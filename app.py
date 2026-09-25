@@ -1,7 +1,7 @@
 import streamlit as st
 import math
-from PIL import Image, ImageEnhance, ImageFilter
-from duckduckgo_search import DDGS
+from PIL import Image, ImageEnhance
+import google.generativeai as genai
 
 st.set_page_config(
     page_title="NijaAI - Gemini Edition", 
@@ -9,6 +9,12 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="collapsed"
 )
+
+# ----------------- ನಿಮ್ಮ GEMINI API KEY ಇಲ್ಲಿ ಹಾಕಿ -----------------
+GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel("gemini-1.5-flash")
+# ------------------------------------------------------------------
 
 # Styling
 st.markdown(
@@ -65,7 +71,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# App State to handle active tabs
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "Home"
 
@@ -115,9 +120,9 @@ with st.container(border=True):
     with c8:
         st.caption("ಕೋಡ್ ಮತ್ತು ನೋಟ್ಸ್ ಬರೆಯಿರಿ")
 
-# Screen Changes Based on Tap
 st.write("")
 
+# Action Triggers
 if st.session_state.active_tab == "Photos":
     st.subheader("🖼️ Photos & Image Studio")
     uploaded_file = st.file_uploader("ಫೋಟೋ ಅಪ್ಲೋಡ್ ಮಾಡಿ", type=["jpg", "jpeg", "png"])
@@ -140,25 +145,19 @@ elif st.session_state.active_tab == "Camera":
     if camera_photo:
         st.image(camera_photo, caption="ಕ್ಯಾಪ್ಚರ್ ಮಾಡಿದ ಫೋಟೋ", use_container_width=True)
 
-elif st.session_state.active_tab == "Avatar":
-    st.subheader("✨ Avatar Studio")
-    st.info("ನಿಮ್ಮ AI ಅವತಾರ್ ಪ್ರೊಫೈಲ್ ಕ್ರಿಯೇಟರ್ ಸದ್ಯದಲ್ಲೇ ಬರಲಿದೆ!")
-
 elif st.session_state.active_tab == "Videos":
-    st.subheader("📹 Video Ideas & Prompt Generator")
-    v_topic = st.text_input("ಯಾವ ವಿಷಯದ ಬಗ್ಗೆ ವೀಡಿಯೋ ಸ್ಕ್ರಿಪ್ಟ್ ಬೇಕು?")
-    if st.button("Generate Script") and v_topic:
-        st.success(f"'{v_topic}' ಗಾಗಿ ಶಾರ್ಟ್ಸ್/ರೀಲ್ಸ್ ಸ್ಕ್ರಿಪ್ಟ್ ಐಡಿಯಾ ಸಿದ್ಧವಾಗಿದೆ!")
+    st.subheader("📹 Video Ideas")
+    st.info("ಯಾವುದೇ ವೀಡಿಯೋ ಕಾನ್ಸೆಪ್ಟ್ ಬೇಕಿದ್ದರೆ ಕೆಳಗಿನ ಚಾಟ್‌ನಲ್ಲಿ ಕೇಳಿ!")
 
 elif st.session_state.active_tab == "Music":
-    st.subheader("🎵 Music Track Assistant")
-    st.info("ಹಾಡಿನ ಸಾಹಿತ್ಯ ಮತ್ತು ಮ್ಯೂಸಿಕ್ ಕಂಪೋಸಿಷನ್ ಪ್ರಾಂಪ್ಟ್ ಜನರೇಟರ್.")
+    st.subheader("🎵 Music Assistant")
+    st.info("ಹಾಡಿನ ಸಾಹಿತ್ಯ ಅಥವಾ ಮ್ಯೂಸಿಕ್ ಐಡಿಯಾಗಳನ್ನು ಚಾಟ್‌ನಲ್ಲಿ ಕೇಳಿ!")
 
 elif st.session_state.active_tab == "Canvas":
     st.subheader("📝 Nija Canvas")
     st.text_area("ನಿಮ್ಮ ನೋಟ್ಸ್ ಅಥವಾ ಕೋಡ್ ಅನ್ನು ಇಲ್ಲಿ ಬರೆಯಿರಿ:", height=200)
 
-# Bottom Interactive Chat Input
+# Real AI Chat
 user_query = st.chat_input("Ask NijaAI anything...")
 
 if user_query:
@@ -168,7 +167,7 @@ if user_query:
         st.write(user_query)
         
     with st.chat_message("assistant"):
-        creator_words = ["creator", "founder", "owner", "developed", "who made", "ಯಾರು", "ಮಾಡಿದ್ದು", "ಹೆಸರು"]
+        creator_words = ["creator", "founder", "owner", "developed", "who made", "ಯಾರು", "ಮಾಡಿದ್ದು", "ಹೆಸರು", "name"]
         if any(w in q_low for w in ["nija", "founder", "creator", "owner", "developed"]) and any(w in q_low for w in creator_words):
             st.markdown("🌟 **NijaAI** ಅನ್ನು ಅಭಿವೃದ್ಧಿಪಡಿಸಿದವರು ಮತ್ತು ಇದರ ಸಂಸ್ಥಾಪಕರು **Santhosh D (ಸಂತೋಷ್ ಡಿ)**.")
             
@@ -176,20 +175,19 @@ if user_query:
             try:
                 ans = eval(user_query, {"__builtins__": None, "math": math})
                 st.markdown(f"**ಉತ್ತರ:** `{ans}`")
-            except Exception as e:
-                st.error(f"ಲೆಕ್ಕಾಚಾರ ದೋಷ: {e}")
+            except Exception:
+                pass
                 
         else:
-            with st.spinner("ಹುಡುಕಲಾಗುತ್ತಿದೆ..."):
+            with st.spinner("ಯೋಚಿಸುತ್ತಿದೆ..."):
                 try:
-                    res_texts = []
-                    with DDGS() as ddgs:
-                        for item in ddgs.text(user_query, max_results=3):
-                            if item.get("body"):
-                                res_texts.append(item.get("body"))
-                    if res_texts:
-                        st.write(" ".join(res_texts))
-                    else:
-                        st.info("ಕ್ಷಮಿಸಿ, ಈ ಬಗ್ಗೆ ಯಾವುದೇ ಮಾಹಿತಿ ಸಿಗಲಿಲ್ಲ.")
+                    system_prompt = (
+                        "You are NijaAI, an authentic and smart AI built by Santhosh D. "
+                        "Respond informatively, warmly, and intelligently in the same language as the user (Kannada or English). "
+                        "Format responses cleanly with markdown."
+                    )
+                    full_prompt = f"{system_prompt}\n\nUser Question: {user_query}"
+                    response = model.generate_content(full_prompt)
+                    st.write(response.text)
                 except Exception as e:
                     st.error(f"ದೋಷ: {e}")
