@@ -2,10 +2,6 @@ import streamlit as st
 import math
 from PIL import Image, ImageEnhance, ImageFilter
 from duckduckgo_search import DDGS
-from groq import Groq
-
-# Groq API Key (ನಿಮ್ಮ API ಕೀಯನ್ನು ಇಲ್ಲಿ ಪೇಸ್ಟ್ ಮಾಡಿ)
-GROQ_API_KEY = "ಇಲ್ಲಿ_ನಿಮ್ಮ_GROQ_API_KEY_ಹಾಕಿ"
 
 st.set_page_config(page_title="NijaAI - Smart AI & Studio", page_icon="⚡", layout="wide")
 st.title("⚡ NijaAI (ನಿಜ AI)")
@@ -50,7 +46,7 @@ if st.button("Search / Ask") and query:
     if any(k in q_lower for k in ["creat", "founder", "owner", "nija ai", "nijaai"]) and any(k in q_lower for k in creator_keywords):
         st.subheader("👑 NijaAI ಪರಿಚಯ")
         st.success("🌟 **NijaAI (ನಿಜ AI)** ಅನ್ನು ಅಭಿವೃದ್ಧಿಪಡಿಸಿದವರು ಮತ್ತು ಇದರ ಸಂಸ್ಥಾಪಕರು **Santhosh D (ಸಂತೋಷ್ ಡಿ)**.")
-        st.info("NijaAI ಅತ್ಯಾಧುನಿಕ AI ಚಾಟ್, ವೆಬ್ ಮಾಹಿತಿ ಮತ್ತು ಫೋಟೋ ಎಡಿಟಿಂಗ್ ಒದಗಿಸುವ ವೇಗದ ಎಐ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಆಗಿದೆ.")
+        st.info("NijaAI ಅತ್ಯಾಧುನಿಕ AI ಸರ್ಚ್, ಲೈವ್ ಮಾಹಿತಿ ಮತ್ತು ಫೋಟೋ ಎಡಿಟಿಂಗ್ ಒದಗಿಸುವ ವೇಗದ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಆಗಿದೆ.")
         
     # 2. Math Calculation
     elif any(op in query for op in ["+", "-", "*", "/", "%", "**"]) and any(char.isdigit() for char in query):
@@ -61,34 +57,24 @@ if st.button("Search / Ask") and query:
         except Exception as e:
             st.error(f"ಲೆಕ್ಕಾಚಾರದಲ್ಲಿ ದೋಷ: {e}")
             
-    # 3. Direct AI Answer for everything else
+    # 3. Web Search & Information
     else:
         st.subheader("🤖 NijaAI ಉತ್ತರ")
-        with st.spinner("ಯೋಚಿಸುತ್ತಿದೆ..."):
+        with st.spinner("ಮಾಹಿತಿ ಪಡೆಯಲಾಗುತ್ತಿದೆ..."):
             try:
-                # ಲೈವ್ ಸರ್ಚ್ ಮಾಹಿತಿ ಸಂಗ್ರಹ
-                web_context = ""
+                results = []
                 with DDGS() as ddgs:
-                    for r in ddgs.text(query, max_results=3):
-                        web_context += f"- {r.get('title')}: {r.get('body')}\n"
+                    for r in ddgs.text(query, max_results=5):
+                        results.append(r)
                 
-                # Groq AI ಮೂಲಕ ಉತ್ತರ ರಚನೆ
-                client = Groq(api_key=GROQ_API_KEY)
-                system_prompt = (
-                    "You are NijaAI, an intelligent assistant built by Santhosh D. "
-                    "Answer clearly, informatively, and accurately in the requested language (Kannada or English). "
-                    "Use the provided web context if relevant."
-                )
-                user_msg = f"Question: {query}\n\nWeb context (if needed):\n{web_context}"
-                
-                response = client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_msg}
-                    ]
-                )
-                
-                st.write(response.choices[0].message.content)
+                if results:
+                    st.info(f"🔍 **'{query}'** ಕುರಿತು ಲಭ್ಯವಿರುವ ಪ್ರಮುಖ ವಿವರಗಳು:")
+                    for item in results:
+                        st.markdown(f"### [{item.get('title')}]({item.get('href')})")
+                        st.write(item.get("body"))
+                        st.divider()
+                else:
+                    st.warning("ಯಾವುದೇ ನಿಖರ ಮಾಹಿತಿ ದೊರೆತಿಲ್ಲ. ಬೇರೆ ರೀತಿಯಲ್ಲಿ ಹುಡುಕಿ ನೋಡಿ.")
             except Exception as e:
-                st.error(f"ಉತ್ತರ ಪಡೆಯುವಲ್ಲಿ ದೋಷ: {e}")
+                st.error(f"ದೋಷ: {e}")
+                
