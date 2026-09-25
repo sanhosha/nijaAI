@@ -1,6 +1,6 @@
 import streamlit as st
 import math
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image, ImageEnhance
 from duckduckgo_search import DDGS
 
 st.set_page_config(
@@ -10,16 +10,14 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom Styling for Gemini Mobile Drawer UI
-st.markdown("""
+# Custom Styling & UI Layout
+html_layout = """
 <style>
     .stApp {
         background-color: #0e0e10;
         color: #f0f0f0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-    
-    /* Top Bar */
     .top-nav {
         display: flex;
         justify-content: space-between;
@@ -42,11 +40,9 @@ st.markdown("""
         justify-content: center;
         font-weight: bold;
     }
-    
-    /* Hero Sparkle & Name */
     .hero {
         text-align: center;
-        margin: 15px 0 25px 0;
+        margin: 10px 0 20px 0;
     }
     .sparkle {
         font-size: 2.4rem;
@@ -56,7 +52,7 @@ st.markdown("""
         display: inline-block;
     }
     .jump-in {
-        font-size: 1.9rem;
+        font-size: 1.85rem;
         font-weight: 500;
         color: #e5e7eb;
         margin-top: 4px;
@@ -66,12 +62,10 @@ st.markdown("""
         font-size: 0.82rem;
         margin-top: 3px;
     }
-
-    /* Floating Gemini Drawer */
     .drawer-card {
         background-color: #1a1a1c;
         border-radius: 28px;
-        padding: 22px 18px;
+        padding: 20px 18px;
         margin-top: 15px;
         border: 1px solid #28282b;
     }
@@ -80,122 +74,103 @@ st.markdown("""
         height: 4px;
         background-color: #4b5563;
         border-radius: 4px;
-        margin: 0 auto 20px auto;
+        margin: 0 auto 18px auto;
     }
-
-    /* Top Action Icons Row */
     .actions-grid {
         display: flex;
         justify-content: space-around;
-        margin-bottom: 25px;
+        margin-bottom: 20px;
     }
     .action-item {
         background-color: #242427;
-        border-radius: 22px;
-        width: 78px;
-        height: 78px;
+        border-radius: 20px;
+        width: 76px;
+        height: 76px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 6px;
+        gap: 5px;
         font-size: 0.78rem;
         color: #d1d5db;
         border: 1px solid #323236;
     }
-    .action-item span.icon {
-        font-size: 1.4rem;
-    }
-
-    /* Feature List Items */
     .feature-row {
         display: flex;
         align-items: center;
         gap: 16px;
-        padding: 12px 6px;
+        padding: 10px 6px;
     }
     .feature-icon {
-        font-size: 1.5rem;
-        color: #9ca3af;
+        font-size: 1.4rem;
         width: 30px;
         text-align: center;
     }
-    .feature-info {
-        display: flex;
-        flex-direction: column;
-    }
     .feature-title {
-        font-size: 1rem;
+        font-size: 0.98rem;
         font-weight: 500;
         color: #f3f4f6;
     }
     .feature-desc {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: #9ca3af;
     }
 </style>
 
-<!-- Top Bar -->
 <div class="top-nav">
     <div class="brand">Gemini Flash <span style="font-size: 0.7rem; color: #60a5fa;">●</span></div>
     <div class="profile-pill">S</div>
 </div>
 
-<!-- Center Greeting -->
 <div class="hero">
     <div class="sparkle">✦</div>
     <div class="jump-in">Let’s jump in, Santhu</div>
     <div class="credit">Developed by Santhosh D</div>
 </div>
 
-<!-- Bottom Drawer like Google Gemini Screenshot -->
 <div class="drawer-card">
     <div class="drawer-handle"></div>
-    
-    <!-- Top 3 Rounded Buttons -->
     <div class="actions-grid">
-        <div class="action-item"><span class="icon">🖼️</span>Photos</div>
-        <div class="action-item"><span class="icon">📷</span>Camera</div>
-        <div class="action-item"><span class="icon">✨</span>Avatar</div>
+        <div class="action-item"><span style="font-size: 1.3rem;">🖼️</span>Photos</div>
+        <div class="action-item"><span style="font-size: 1.3rem;">📷</span>Camera</div>
+        <div class="action-item"><span style="font-size: 1.3rem;">✨</span>Avatar</div>
     </div>
     
-    <!-- Vertical List of Options -->
     <div class="feature-row">
         <div class="feature-icon">🎨</div>
-        <div class="feature-info">
-            <span class="feature-title">Images</span>
-            <span class="feature-desc">Create and edit</span>
+        <div>
+            <div class="feature-title">Images</div>
+            <div class="feature-desc">Create and edit</div>
         </div>
     </div>
-    
     <div class="feature-row">
         <div class="feature-icon">📹</div>
-        <div class="feature-info">
-            <span class="feature-title">Videos</span>
-            <span class="feature-desc">Bring ideas to life</span>
+        <div>
+            <div class="feature-title">Videos</div>
+            <div class="feature-desc">Bring ideas to life</div>
         </div>
     </div>
-    
     <div class="feature-row">
         <div class="feature-icon">🎵</div>
-        <div class="feature-info">
-            <span class="feature-title">Music</span>
-            <span class="feature-desc">Make audio tracks</span>
+        <div>
+            <div class="feature-title">Music</div>
+            <div class="feature-desc">Make audio tracks</div>
         </div>
     </div>
-    
     <div class="feature-row">
         <div class="feature-icon">📝</div>
-        <div class="feature-info">
-            <span class="feature-title">Canvas</span>
-            <span class="feature-desc">Code, write or make slides</span>
+        <div>
+            <div class="feature-title">Canvas</div>
+            <div class="feature-desc">Code, write or make slides</div>
         </div>
     </div>
 </div>
 <br>
-""", unsafe_allow_html=True)
+"""
 
-# Image Editor inside expander / sidebar
+st.markdown(html_layout, unsafe_allow_html=True)
+
+# Image Studio in expander
 with st.expander("📸 ಫೋಟೋ ಎಡಿಟಿಂಗ್ ತೆರೆಯಿರಿ (Image Studio)"):
     uploaded_file = st.file_uploader("ಫೋಟೋ ಅಪ್ಲೋಡ್ ಮಾಡಿ", type=["jpg", "jpeg", "png"])
     if uploaded_file:
@@ -221,12 +196,10 @@ if user_query:
         st.write(user_query)
         
     with st.chat_message("assistant"):
-        # 1. Founder & Developer Details
         creator_words = ["creator", "founder", "owner", "developed", "who made", "ಯಾರು", "ಮಾಡಿದ್ದು", "ಹೆಸರು"]
         if any(w in q_low for w in ["nija", "founder", "creator", "owner", "developed"]) and any(w in q_low for w in creator_words):
             st.markdown("🌟 **NijaAI** ಅನ್ನು ಅಭಿವೃದ್ಧಿಪಡಿಸಿದವರು ಮತ್ತು ಇದರ ಸಂಸ್ಥಾಪಕರು **Santhosh D (ಸಂತೋಷ್ ಡಿ)**.")
             
-        # 2. Math Calculations
         elif any(op in user_query for op in ["+", "-", "*", "/", "%", "**"]) and any(c.isdigit() for c in user_query):
             try:
                 ans = eval(user_query, {"__builtins__": None, "math": math})
@@ -234,7 +207,6 @@ if user_query:
             except Exception as e:
                 st.error(f"ಲೆಕ್ಕಾಚಾರ ದೋಷ: {e}")
                 
-        # 3. Direct Clean Text Answers (No Raw Links)
         else:
             with st.spinner("ಹುಡುಕಲಾಗುತ್ತಿದೆ..."):
                 try:
